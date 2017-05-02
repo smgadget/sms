@@ -1,0 +1,35 @@
+<html>
+
+   <head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}"/>
+	
+	<h1>Welcome to global sms text messaging service.</h1>
+   </head>
+
+   <body>
+      
+    <p2>Displaying existing records:</p>
+    <br> 
+    <table>
+	<tbody>
+		<tr>
+			<td><p1>ID</p1></td>
+			<td><p1>NAME</p1></td>
+			<td><p1>PHONE NUMBER</p1></td>
+			<td><p1>MESSAGE CONTENT</p1></td>
+			<td><p1>SENDER</p1></td>
+		</tr>
+		{% for record in dbObjects %}
+		<tr>
+			<th scope="row"><p1>{{record.id}}</p1></th>
+			<td><p1>{{record.name}}</p1></td>
+			<td><p1>+{{record.phonenumber}}</p1></td>
+			<td><p1>{{record.message}}</p1></td>
+			<td><p1>{{record.sender}}</p1></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+    </table>
+   </body>
+</html>
