@@ -1,0 +1,40 @@
+#-*- coding: utf-8 -*-
+'''
+*** project form ***
+'''
+
+from django import forms
+from django.forms import ModelForm
+from myapp.models import SMSPhoneMessageRecords
+
+
+# Form for send single sms text message
+# Takes only phone number and text as input fields
+class SMSForm(forms.Form):
+   phoneNumber = forms.CharField(label = 'Phone Number', max_length = 20)
+   smsText = forms.CharField(label = 'Message Text', max_length = 50, required=True, widget=forms.Textarea)
+
+
+# Form for create/update phone sms, etc. records
+# Takes recipient name, phone number*, message* and sender name as data fields
+class RecipientForm(forms.ModelForm):
+   
+   '''
+   phoneNumber = forms.CharField(label = 'Phone Number', max_length = 20)
+   messageText = forms.CharField(
+	label = 'Message Text', 
+	max_length = 50, 
+	widget=forms.Textarea
+	)
+   recipientName = forms.CharField(
+	label = 'Recipient Name', 
+	max_length = 20,
+	required = False)
+   senderName = forms.CharField(
+	label = 'Sender Name', 
+	max_length = 20)
+   '''
+
+   class Meta:
+	model = SMSPhoneMessageRecords
+	fields = ('phonenumber', 'name', 'message', 'sender')

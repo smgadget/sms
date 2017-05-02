@@ -1,0 +1,28 @@
+# Import the SDK
+import boto3
+# init the sns boto3 client
+client = boto3.client('sns')
+
+
+# function to send a sms text message to a phone number
+def sendSMSTo(name, number, text):
+    
+    strNumber = str(number)
+    strText = text
+    strMessageAttributes={
+	    'AWS.SNS.SMS.SenderID': {
+	      'DataType': 'String',
+	      'StringValue': name   
+	    }    
+	  }  
+    strResult = ""
+    bSuccess = False
+    try:
+	strResult = str(client.publish(PhoneNumber = strNumber, Message=strText, MessageAttributes = strMessageAttributes))
+	bSuccess = true
+    except Exception as e:
+	strResult = str(e)
+	bSuccess = false
+    return bSuccess
+    
+
