@@ -1,0 +1,44 @@
+<html>
+   <head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static "Templates/css/style.css" %}"/>
+   <head>
+   <body>
+    
+      <form name = "form" action = "{% url 'sendthesms' %}"
+         method = "POST" >
+         {% csrf_token %}
+	 <div style = "max-width:470px;">
+	    <center> 
+
+               <table>
+		  <tbody>
+		     {% for field in form %}
+			<tr>
+			   <td style = >
+				<p1>{{ field.label_tag }}</p1>
+			   </td>
+        		   <td>
+				{% if field.field.required %}
+				<span class="special_class">*</span>
+				<p1>{{ field }}</p1>
+			        {% endif %}
+   			   </td>
+
+			   {% endfor %} 
+			 </tr>
+		    </tbody>
+	       </table>
+            
+               <button type = "submit" 
+                  value = "Login" >
+                  <strong>SEND SMS</strong>
+               </button>
+               
+            </center>
+         </div>
+         
+      </form>
+      
+   </body>
+</html>

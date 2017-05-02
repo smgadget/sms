@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+'''
+*** myapp view ***
+'''
+
+
+from __future__ import unicode_literals
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.http import HttpResponse
+from utilities.notification.sms.sns_sms import sendSMSTo
+from utilities.dao.dao import addNewRecipient
+from myapp.models import SMSPhoneMessageRecords
+from myapp.forms import SMSForm
+from myapp.forms import RecipientForm
+from django.views.generic import View
+
+
+
+# handle SMS send post request with form parameters, used with sendSMS 
+def sendTheSMS(request):
+   phoneNumber = ""
+   text = ""
+   status = ""
+   if request.method == "POST":
+      #Get the posted form
+      form = SMSForm(request.POST)
+
+      if form.is_valid():
+	 #get form entries
+         phoneNumber = form.cleaned_data['phoneNumber']
+         text = form.cleaned_data['smsText']
+	 #call function to send sms
+	 if sendSMSTo("aws sns", phoneNumber, text):
+		status = "Message sent."
+	 else:
+		status = "Message not sent."
+   else:
+	 print "not post..."
+         form = SMSForm()
+		
+   return render(request, 'smssent.html', {"phoneNumber" : phoneNumber, "text" : text, "status" : status})
+
+# load sms send form for a single phone number
+def sendSMS(request):
+   form = SMSForm(request.POST)
+   return render(request, "smssend.html", {'form': SMSForm})
+
+
+# display all records in phone number message db
+def bulkSMSService(request):
+
+    #Read ALL entries
+   dbObjects = SMSPhoneMessageRecords.objects.all()
+
+   return render(request, 'sms.html', {"dbObjects" : dbObjects})
+
+
+# load form to create new recipient
+def editRecipient(request):
+   
+   form = RecipientForm(request.POST)
+   return render(request, "addrecipient.html", {'form': RecipientForm})
+
+def createUpdateRecipient(request):
+
+   status = ""
+   if request.method == "POST":
+      #Get the posted form
+      form = RecipientForm(request.POST)
+
+      if form.is_valid():
+         phoneNumber = form.cleaned_data['phonenumber']
+         text = form.cleaned_data['message']
+	 name = form.cleaned_data['name']
+	 sender = form.cleaned_data['sender']
+	 print name + " " + str(phoneNumber) + " " + text + " " + sender + "to be updated in db"
+	 #call dao to perform changes
+	 if addNewRecipient(name, phoneNumber, text, sender): status = "Recipient updates successful"
+	 else: status = "Recipient update failed"
+   else:
+         form = SMSForm()
+   
+   return render(request, 'recipientadded.html', {"phoneNumber" : phoneNumber, "text" : text, "status" : status})
+
+
+def crudops(request):
+   
+   #Read ALL entries
+   objects = SMSPhoneMessageRecords.objects.all()
+   res ='Printing all Dreamreal entries in the DB : <br>'
+   
+   for elt in objects:
+      #sendSMS("Luna", elt.phonenumber, elt.name)
+      res += elt.name + " : " + str(elt.phonenumber) + "<br>"
+
+   #Creating an entry
+   
+   dreamreal = Dreamreal(
+      website = "www.polo.com", mail = "sorex@polo.com", 
+      name = "sorex", phonenumber = "002376970"
+   )
+
+   dreamreal.save()
+   
+   #Read a specific entry:
+   sorex = Dreamreal.objects.get(name = "sorex")
+   res += 'Printing One entry <br>'
+   res += sorex.name
+   
+   #Delete an entry
+   res += '<br> Deleting an entry <br>'
+   sorex.delete()
+   
+   #Update
+   dreamreal = Dreamreal(
+      website = "www.polo.com", mail = "sorex@polo.com", 
+      name = "sorex", phonenumber = "002376970"
+   )
+   
+   dreamreal.save()
+   res += 'Updating entry<br>'
+   
+   dreamreal = Dreamreal.objects.get(name = 'sorex')
+   dreamreal.name = 'thierry'
+   dreamreal.save()
+   
+   return HttpResponse(res)

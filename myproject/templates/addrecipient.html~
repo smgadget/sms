@@ -1,0 +1,46 @@
+<html>
+   <head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}"/>
+   <head>
+   <body>
+    
+      <form name = "form" action = "{% url 'createUpdateRecipient' %}"
+         method = "POST" >
+         {% csrf_token %}
+	 <div style = "max-width:470px;">
+	    <center> 
+
+               <table>
+		  <tbody>
+		     {% for field in form %}
+			<tr>
+			   <td style = >
+				<p1>{{ field.label_tag }}</p1>
+			   </td>
+        		   <td>
+				{% if field.field.required %}
+				<span class="special_class">*</span>
+				{% else %}
+				<span class="special_class">&nbsp;&nbsp;</span>
+			        {% endif %}
+				<p1>{{ field }}</p1>
+   			   </td>
+
+			   {% endfor %} 
+			 </tr>
+		    </tbody>
+	       </table>
+            
+               <button type = "submit" 
+                  value = "Login" >
+                  <strong>ADD RECIPIENT</strong>
+               </button>
+               
+            </center>
+         </div>
+         
+      </form>
+      
+   </body>
+</html>
